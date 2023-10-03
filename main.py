@@ -1,10 +1,39 @@
 import telebot
 from telebot import types
+import requests
 
 #Conexion con nuestro BOT
-TOKEN = 'TU_TOKEN'
-bot = telebot.TeleBot(TOKEN)
+TOKEN = ''
+API_KEY = ''
 
+bot = telebot.TeleBot(TOKEN)
+BASE_URL = 'http://api.openweathermap.org/data/2.5/weather?'
+
+
+
+
+def get_weather(city_name):
+    complete_url = BASE_URL + "q=" + city_name + "&appid=" + API_KEY
+    response = requests.get(complete_url)
+    data = response.json()
+    print(data)
+    if data["cod"] != 404:
+        main_data = data["main"]
+        weather_data = data["weather"][0]
+        temperature = main_data["temp"] - 273.15
+        description = weather_data["description"]
+        return f"Temperatura: {temperature:.2f}°C\n{description.capitalize()}"
+    else:
+        return 'Ciudad no encontrada'
+
+@bot.message_handler(commands=['clima'])
+def send_weather(message):
+    city_name = message.text.split()[1] if len(message.text.split()) > 1 else None
+    if city_name:
+        weather_info = get_weather(city_name)
+        bot.reply_to(message, weather_info)
+    else:
+        bot.reply_to(message, "Por favor, proporciona el nombre de la ciudad. Ejemplo: /clima Madrid")
 
 
 #Creacion de comandos simples como `/start` y `/help`
@@ -22,7 +51,6 @@ def send_help(message):
 # @bot.message_handler(func=lambda m: True)
 # def echo_all(message):
 #     bot.reply_to(message, message.text)
-
 
 
 @bot.message_handler(commands=['pizza'])
@@ -52,11 +80,6 @@ def callback_query(call):
 def send_image(message):
     img_url = 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Python-logo-notext.svg/1200px-Python-logo-notext.svg.png'
     bot.send_photo(chat_id=message.chat.id, photo=img_url, caption='Aqui tienes tu imagen')
-
-
-
-
-
 
 
 if __name__ == "__main__":
