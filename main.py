@@ -3,13 +3,11 @@ from telebot import types
 import requests
 
 #Conexion con nuestro BOT
-<<<<<<< HEAD
+
 TOKEN = ''
 API_KEY = ''
-=======
-TOKEN = '6555951774:AAFIMuk8TZsl4wBweWAB4Henn73jZgQhOOc'
-bot = telebot.TeleBot(TOKEN)
->>>>>>> 59b65708d0749e096e1ad107c64449fa4780ec35
+
+
 
 bot = telebot.TeleBot(TOKEN)
 BASE_URL = 'http://api.openweathermap.org/data/2.5/weather?'
